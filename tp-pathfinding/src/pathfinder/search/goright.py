@@ -42,6 +42,7 @@ class GoRight:
 
             # Go right
             successors = grid.get_neighbours(node.state)
+            print (successors)
             if 'right' in successors:
 
                 # Get the successor
