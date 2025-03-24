@@ -24,4 +24,40 @@ class DepthFirstSearch:
         # Add the node to the explored dictionary
         explored[node.state] = True
         
-        return NoSolution(explored)
+        # Initialize the frontier with the initial node
+        # In this example, the frontier is a stack
+        frontier = StackFrontier()
+        frontier.add(node)
+
+        while True:
+
+            #  Fail if the frontier is empty
+            if frontier.is_empty():
+                return NoSolution(explored)
+
+            # Remove a node from the frontier
+            node = frontier.remove()
+
+            # DFS 
+            # Get the neighbours of the current node
+            successors = grid.get_neighbours(node.state)
+            
+            for key, value in successors.items():
+                
+                if value not in explored:
+                    # Initialize the son node
+                    new_node = Node("", value,
+                                    node.cost + grid.get_cost(value),
+                                    parent=node, action=key)
+
+                    # Mark the successor as reached
+                    explored[value] = True
+
+                    # Return if the node contains a goal state
+                    # In this example, the goal test is run
+                    # before adding a new node to the frontier
+                    if value == grid.end:
+                        return Solution(new_node, explored)
+                    
+                    # Add the new node to the frontier
+                    frontier.add(new_node)
