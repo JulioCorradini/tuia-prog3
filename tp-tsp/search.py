@@ -82,6 +82,9 @@ class HillClimbing(LocalSearch):
 class HillClimbingReset(LocalSearch):
     """Algoritmo de ascension de colinas con reinicio aleatorio."""
 
+
+    
+
     # COMPLETAR
 
 
