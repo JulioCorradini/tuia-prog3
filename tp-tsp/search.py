@@ -82,10 +82,65 @@ class HillClimbing(LocalSearch):
 class HillClimbingReset(LocalSearch):
     """Algoritmo de ascension de colinas con reinicio aleatorio."""
 
+    def __init__(self, max_resets: int = 100, max_iters_per_reset: int = 1000) -> None:
+        """Construye una instancia de la clase.
 
-    
+        Argumentos:
+        ==========
+        max_resets: int
+            numero maximo de reinicios aleatorios
+        max_iters_per_reset: int
+            numero maximo de iteraciones por cada reinicio
+        """
+        super().__init__()
+        self.max_resets = max_resets
+        self.max_iters_per_reset = max_iters_per_reset
+        self.best_tour = None
+        self.best_value = float('-inf')
+        self.total_iters = 0
 
-    # COMPLETAR
+    def solve(self, problem: OptProblem):
+        """Resuelve un problema de optimizacion con ascension de colinas de reinicio aleatorio.
+
+        Argumentos:
+        ==========
+        problem: OptProblem
+            un problema de optimizacion
+        """
+        start_time = time()
+        self.problem = problem  # Guardamos el problema para usar random_reset()
+
+        for _ in range(self.max_resets):
+            # 1. Generar un estado inicial aleatorio
+            current_tour = self.problem.random_reset()
+            current_value = self.problem.obj_val(current_tour)
+            iters_reset = 0
+
+            # 2. Aplicar Hill Climbing desde el estado inicial aleatorio
+            while iters_reset < self.max_iters_per_reset:
+                self.total_iters += 1
+                iters_reset += 1
+                act, succ_val = self.problem.max_action(current_tour)
+
+                # Si no encontramos una mejora, detenemos la búsqueda local para este reinicio
+                if succ_val <= current_value:
+                    break
+
+                # Nos movemos al mejor vecino
+                current_tour = self.problem.result(current_tour, act)
+                current_value = succ_val
+
+            # 3. Actualizar la mejor solución global encontrada
+            if current_value > self.best_value:
+                self.best_value = current_value
+                self.best_tour = list(current_tour)  # Guardar una copia
+
+        # 4. Almacenar los resultados finales
+        end_time = time()
+        self.time = end_time - start_time
+        self.tour = self.best_tour
+        self.value = self.best_value
+        self.niters = self.total_iters
 
 
 class Tabu(LocalSearch):
